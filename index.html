@@ -332,7 +332,33 @@
             border: 1px solid #ef4444;
         }
         
-        @media (max-width: 480px) {
+        .help-section {
+            line-height: 1.6;
+        }
+        
+        .help-section h3 {
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        
+        .help-section h4 {
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .help-section p {
+            margin-bottom: 15px;
+            color: #374151;
+        }
+        
+        .help-section ul, .help-section ol {
+            color: #374151;
+            line-height: 1.6;
+        }
+        
+        .help-section li {
+            margin-bottom: 8px;
+        }
             .app-container {
                 padding: 15px;
             }
@@ -371,6 +397,7 @@
             <button class="nav-btn active" onclick="showView('practice')">Practice</button>
             <button class="nav-btn" onclick="showView('verses')">Verses</button>
             <button class="nav-btn" onclick="showView('stats')">Stats</button>
+            <button class="nav-btn" onclick="showView('help')">Help</button>
         </div>
         
         <!-- Practice View -->
@@ -415,6 +442,101 @@
         
         <!-- Stats View -->
         <div id="statsView" class="verse-management hidden">
+            <h2 style="margin-bottom: 20px; color: #2563eb;">How to Use Scripture Memory</h2>
+            
+            <div class="help-section">
+                <h3 style="color: #2563eb; margin-bottom: 15px;">📚 Getting Started</h3>
+                <p style="margin-bottom: 15px;">Welcome to Scripture Memory! This app helps you memorize Bible verses using a proven spaced repetition system.</p>
+                
+                <h4 style="color: #059669; margin-bottom: 10px;">Adding Your First Verse:</h4>
+                <ol style="margin-bottom: 20px; padding-left: 20px;">
+                    <li>Go to the <strong>Verses</strong> tab</li>
+                    <li>Enter the verse reference (e.g., "John 3:16")</li>
+                    <li>Type or paste the verse text</li>
+                    <li>Tap <strong>Add Verse</strong></li>
+                </ol>
+                
+                <h3 style="color: #2563eb; margin-bottom: 15px;">🎯 Practice System</h3>
+                <p style="margin-bottom: 15px;">The app uses a three-stage system designed to move verses from short-term to long-term memory:</p>
+                
+                <div style="background: #f0f9ff; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #3b82f6;">
+                    <h4 style="color: #1e40af; margin-bottom: 10px;">Stage 1: Daily Practice (7 weeks)</h4>
+                    <p style="margin-bottom: 10px;">New verses appear every day for 7 weeks (49 days). This intensive daily practice helps establish the verse in your memory.</p>
+                    <p><strong>What to do:</strong> Practice these verses daily using the show/hide and self-test features.</p>
+                </div>
+                
+                <div style="background: #f0fdf4; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #10b981;">
+                    <h4 style="color: #065f46; margin-bottom: 10px;">Stage 2: Weekly Practice (7 months)</h4>
+                    <p style="margin-bottom: 10px;">After 7 weeks, verses are assigned to specific days of the week (Sunday through Saturday). You'll practice each verse once per week for 7 months.</p>
+                    <p><strong>What to do:</strong> Practice weekly verses only on their assigned day.</p>
+                </div>
+                
+                <div style="background: #fefce8; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #eab308;">
+                    <h4 style="color: #92400e; margin-bottom: 10px;">Stage 3: Monthly Practice (7 years)</h4>
+                    <p style="margin-bottom: 10px;">After 7 months of weekly practice, verses are assigned to specific days of the month (1-30). You'll practice each verse once per month for 7 years.</p>
+                    <p><strong>What to do:</strong> Practice monthly verses only on their assigned day of the month.</p>
+                </div>
+                
+                <div style="background: #f3f4f6; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #6b7280;">
+                    <h4 style="color: #374151; margin-bottom: 10px;">Stage 4: Retired</h4>
+                    <p>After 7 years of monthly practice, verses are considered fully memorized and retire from active practice.</p>
+                </div>
+                
+                <h3 style="color: #2563eb; margin-bottom: 15px;">📱 Daily Practice Tips</h3>
+                <ul style="margin-bottom: 20px; padding-left: 20px;">
+                    <li style="margin-bottom: 8px;"><strong>Read First:</strong> Always read the verse aloud before hiding it</li>
+                    <li style="margin-bottom: 8px;"><strong>Hide & Recite:</strong> Use the "Hide Text" button and try to recite from memory</li>
+                    <li style="margin-bottom: 8px;"><strong>Test Yourself:</strong> Use the "Test Yourself" feature to type the verse and check accuracy</li>
+                    <li style="margin-bottom: 8px;"><strong>Be Consistent:</strong> Practice daily, even if just for a few minutes</li>
+                    <li style="margin-bottom: 8px;"><strong>Don't Rush:</strong> Take time to understand the meaning, not just memorize words</li>
+                </ul>
+                
+                <h3 style="color: #2563eb; margin-bottom: 15px;">🔄 Practice Features</h3>
+                <ul style="margin-bottom: 20px; padding-left: 20px;">
+                    <li style="margin-bottom: 8px;"><strong>Show/Hide:</strong> Toggle verse visibility for memory practice</li>
+                    <li style="margin-bottom: 8px;"><strong>Next:</strong> Move to the next verse in today's practice list</li>
+                    <li style="margin-bottom: 8px;"><strong>Test Yourself:</strong> Type the verse to check your accuracy</li>
+                    <li style="margin-bottom: 8px;"><strong>Progress Bar:</strong> See how many verses you've completed today</li>
+                </ul>
+                
+                <h3 style="color: #2563eb; margin-bottom: 15px;">📊 Understanding Your Stats</h3>
+                <ul style="margin-bottom: 20px; padding-left: 20px;">
+                    <li style="margin-bottom: 8px;"><strong>Total Verses:</strong> All verses you've added to the app</li>
+                    <li style="margin-bottom: 8px;"><strong>Daily Practice:</strong> Verses in their first 7 weeks</li>
+                    <li style="margin-bottom: 8px;"><strong>Weekly Practice:</strong> Verses in their 7-month weekly phase</li>
+                    <li style="margin-bottom: 8px;"><strong>Monthly Practice:</strong> Verses in their 7-year monthly phase</li>
+                </ul>
+                
+                <h3 style="color: #2563eb; margin-bottom: 15px;">📅 Special Calendar Rules</h3>
+                <ul style="margin-bottom: 20px; padding-left: 20px;">
+                    <li style="margin-bottom: 8px;"><strong>February:</strong> Days 29-30 are practiced on the last day of February</li>
+                    <li style="margin-bottom: 8px;"><strong>31st Days:</strong> No monthly practice on the 31st of any month</li>
+                    <li style="margin-bottom: 8px;"><strong>Weekly Assignment:</strong> First promoted verse gets Sunday, second gets Monday, etc.</li>
+                </ul>
+                
+                <h3 style="color: #2563eb; margin-bottom: 15px;">💡 Pro Tips</h3>
+                <ul style="margin-bottom: 20px; padding-left: 20px;">
+                    <li style="margin-bottom: 8px;"><strong>Start Small:</strong> Begin with 1-2 verses to build the habit</li>
+                    <li style="margin-bottom: 8px;"><strong>Set Reminders:</strong> Use your phone's reminder app to practice daily</li>
+                    <li style="margin-bottom: 8px;"><strong>Context Matters:</strong> Read the surrounding verses to understand context</li>
+                    <li style="margin-bottom: 8px;"><strong>Review Often:</strong> Even retired verses benefit from occasional review</li>
+                    <li style="margin-bottom: 8px;"><strong>Be Patient:</strong> Memorization takes time - trust the process!</li>
+                </ul>
+                
+                <h3 style="color: #2563eb; margin-bottom: 15px;">🚀 Installing the App</h3>
+                <p style="margin-bottom: 10px;">For the best experience, install this app on your device:</p>
+                <ul style="margin-bottom: 20px; padding-left: 20px;">
+                    <li style="margin-bottom: 8px;"><strong>Chrome:</strong> Look for "Install" or "Add to Home Screen" option</li>
+                    <li style="margin-bottom: 8px;"><strong>iPhone:</strong> Safari → Share → Add to Home Screen</li>
+                    <li style="margin-bottom: 8px;"><strong>Benefits:</strong> Works offline, faster loading, feels like a native app</li>
+                </ul>
+                
+                <div style="background: #eff6ff; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #3b82f6;">
+                    <h4 style="color: #1e40af; margin-bottom: 10px;">🎯 Your Goal</h4>
+                    <p>The goal isn't just to memorize verses, but to hide God's Word in your heart so it can transform your life. Take time to meditate on the meaning and let the verses speak to your heart.</p>
+                </div>
+            </div>
+        </div>
             <h2 style="margin-bottom: 20px; color: #2563eb;">Statistics</h2>
             
             <div class="stats-grid">
@@ -863,6 +985,7 @@
                 document.getElementById('practiceView').classList.add('hidden');
                 document.getElementById('versesView').classList.add('hidden');
                 document.getElementById('statsView').classList.add('hidden');
+                document.getElementById('helpView').classList.add('hidden');
                 
                 // Show selected view
                 document.getElementById(viewName + 'View').classList.remove('hidden');
