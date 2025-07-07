@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scripture Memory App</title>
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiU2NyaXB0dXJlIE1lbW9yeSBBcHAiLCJzaG9ydF9uYW1lIjoiU2NyaXB0dXJlIE1lbW9yeSIsInN0YXJ0X3VybCI6Ii8iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjZmZmZmZmIiwidGhlbWVfY29sb3IiOiIjNjM2NmYxIiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5QjNhV1IwYUQwaU1qUXdJaUJvWldsbmFIUTlJakkwTUNJZ2RtbGxkMEp2ZUQwaU1DQXdJREkwTUNBeU5EQWlJR1pwYkd3OUlpTmpNek0yWmpFaVBnMGtQR05wY21Oc1pTQmplRDBpTVRJd0lpQmplVDBpTVRJd0lpQnlQU0l6TUNJdlBnMGtQSEJoZEdnaVpEMGlUVEV5TUNBek1FRXpNQ0F6TUVFek1DQXpNRkV6TUNBek1ERXpNQ0F6TUVFek1DQXpNRkV6TUNBek1FRXpNQ0F6TUVvaVBnMGtQSEJoZEdnaVpEMGlUVGxrSURkaGJERXlJREU0UWpjZ09TNGpiREV5SURFNGJERXlJREU0Y0RjZ09TNTRiREV5SURFNGNEY2dPUzU0YkRFeUlERTRRamNnT1M1NGJERXlJREU0VGpscklEZGhXaUlnWm1sc2JEMGlJMlptWm1abVptWWlMejRnUEM5emRtYysifV0sImZlYXR1cmVzIjpbIkNST1NTX09SSUdJTl9JU09MQVRJT04iXX0=">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 6px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 3px;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .main {
+            padding: 30px 20px;
+        }
+        
+        .tab-container {
+            display: flex;
+            margin-bottom: 30px;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 4px;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 12px 8px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 13px;
+            font-weight: 500;
+            color: #64748b;
+        }
+        
+        .tab.active {
+            background: #6366f1;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .verse-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-left: 4px solid #6366f1;
+            transition: all 0.3s ease;
+        }
+        
+        .verse-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .verse-text {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            color: #1e293b;
+        }
+        
+        .verse-reference {
+            font-size: 14px;
+            color: #6366f1;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .verse-progress {
+            font-size: 12px;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .progress-bar {
+            flex: 1;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            transition: width 0.3s ease;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 12px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .input-group input,
+        .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .input-group input:focus,
+        .input-group textarea:focus {
+            outline: none;
+            border-color: #6366f1;
+        }
+        
+        .input-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #6366f1;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: #6366f1;
+            border-radius: 2px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #64748b;
+        }
+        
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            background: white;
+            max-width: 400px;
+            margin: 50px auto;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        
+        .modal-header {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #1e293b;
+        }
+        
+        .close {
+            float: right;
+            font-size: 28px;
+            cursor: pointer;
+            color: #64748b;
+            line-height: 1;
+            margin-top: -10px;
+        }
+        
+        .close:hover {
+            color: #374151;
+        }
+        
+        .no-select {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        .verse-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .verse-actions button {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-practice {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-practice:hover {
+            background: #059669;
+        }
+        
+        .btn-skip {
+            background: #f59e0b;
+            color: white;
+        }
+        
+        .btn-skip:hover {
+            background: #d97706;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Scripture Memory</h1>
+            <p>Hide God's Word in your heart</p>
+        </div>
+        
+        <div class="main">
+            <div class="tab-container">
+                <button class="tab active" onclick="showTab('practice')">Practice</button>
+                <button class="tab" onclick="showTab('add')">Add Verse</button>
+                <button class="tab" onclick="showTab('stats')">Stats</button>
+                <button class="tab" onclick="showTab('backup')">Backup</button>
+            </div>
+            
+            <div id="practice-tab" class="tab-content active">
+                <div class="section-title">Today's Practice</div>
+                <div id="daily-verses"></div>
+                <div id="weekly-verses"></div>
+                <div id="monthly-verses"></div>
+                <div id="no-verses" class="empty-state" style="display:none;">
+                    <div class="empty-state-icon">📖</div>
+                    <p>No verses to practice today.<br>Add your first verse to get started!</p>
+                </div>
+            </div>
+            
+            <div id="add-tab" class="tab-content">
+                <div class="section-title">Add New Verse</div>
+                <div class="input-group">
+                    <label for="verse-text">Verse Text (CSB)</label>
+                    <textarea id="verse-text" placeholder="Enter the verse text from CSB translation"></textarea>
+                </div>
+                <div class="input-group">
+                    <label for="verse-reference">Reference</label>
+                    <input type="text" id="verse-reference" placeholder="e.g., John 3:16">
+                </div>
+                <button class="btn" onclick="addVerse()">Add Verse</button>
+            </div>
+            
+            <div id="stats-tab" class="tab-content">
+                <div class="section-title">Your Progress</div>
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-verses">0</div>
+                        <div class="stat-label">Total Verses</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="daily-count">0</div>
+                        <div class="stat-label">Daily Practice</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="weekly-count">0</div>
+                        <div class="stat-label">Weekly Practice</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="monthly-count">0</div>
+                        <div class="stat-label">Monthly Practice</div>
+                    </div>
+                </div>
+                <div class="section-title">All Verses</div>
+                <div id="all-verses-list"></div>
+            </div>
+            
+            <div id="backup-tab" class="tab-content">
+                <div class="section-title">Backup & Restore</div>
+                <button class="btn" onclick="exportData()">Export Progress</button>
+                <div class="input-group">
+                    <label for="import-file">Import Progress</label>
+                    <input type="file" id="import-file" accept=".json">
+                </div>
+                <button class="btn btn-secondary" onclick="importData()">Import Data</button>
+                <button class="btn btn-danger" onclick="clearAllData()">Clear All Data</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="practice-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" onclick="closePracticeModal()">&times;</span>
+                Practice Verse
+            </div>
+            <div id="practice-content"></div>
+        </div>
+    </div>
+    
+    <script>
+        class ScriptureMemoryApp {
+            constructor() {
+                this.verses = JSON.parse(localStorage.getItem('scriptureVerses') || '[]');
+                this.init();
+            }
+            
+            init() {
+                this.updateDisplay();
+                this.checkDailyReset();
+                this.registerServiceWorker();
+            }
+            
+            checkDailyReset() {
+                const today = new Date().toDateString();
+                const lastVisit = localStorage.getItem('lastVisit');
+                
+                if (lastVisit !== today) {
+                    localStorage.setItem('lastVisit', today);
+                    this.processVersesForNewDay();
+                }
+            }
+            
+            processVersesForNewDay() {
+                const today = new Date();
+                const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
+                const dayOfMonth = today.getDate();
+                
+                this.verses = this.verses.map(verse => {
+                    // Reset daily practice status
+                    if (verse.stage === 'daily') {
+                        verse.practicedToday = false;
+                    }
+                    
+                    // Check if daily verses should be promoted to weekly
+                    if (verse.stage === 'daily' && verse.daysInStage >= 49) { // 7 weeks
+                        verse.stage = 'weekly';
+                        verse.weeklyDay = this.getNextWeeklyDay();
+                        verse.daysInStage = 0;
+                        verse.weeksInStage = 0;
+                    }
+                    
+                    // Check if weekly verses should be promoted to monthly
+                    if (verse.stage === 'weekly' && verse.weeksInStage >= 28) { // 7 months (4 weeks each)
+                        verse.stage = 'monthly';
+                        verse.monthlyDay = this.getNextMonthlyDay();
+                        verse.weeksInStage = 0;
+                        verse.monthsInStage = 0;
+                    }
+                    
+                    // Check if monthly verses should be retired
+                    if (verse.stage === 'monthly' && verse.monthsInStage >= 84) { // 7 years (12 months each)
+                        verse.stage = 'retired';
+                    }
+                    
+                    // Update counters
+                    if (verse.stage === 'daily') {
+                        verse.daysInStage++;
+                    } else if (verse.stage === 'weekly' && verse.weeklyDay === dayOfWeek) {
+                        verse.weeksInStage++;
+                    } else if (verse.stage === 'monthly' && verse.monthlyDay === dayOfMonth) {
+                        verse.monthsInStage++;
+                    }
+                    
+                    return verse;
+                });
+                
+                this.saveData();
+            }
+            
+            getNextWeeklyDay() {
+                const weeklyVerseCounts = [0, 0, 0, 0, 0, 0, 0]; // Sunday to Saturday
+                
+                this.verses.forEach(verse => {
+                    if (verse.stage === 'weekly') {
+                        weeklyVerseCounts[verse.weeklyDay]++;
+                    }
+                });
+                
+                // Find the day with the least verses
+                let minCount = Math.min(...weeklyVerseCounts);
+                return weeklyVerseCounts.indexOf(minCount);
+            }
+            
+            getNextMonthlyDay() {
+                const monthlyVerseCounts = new Array(30).fill(0); // Days 1-30
+                
+                this.verses.forEach(verse => {
+                    if (verse.stage === 'monthly') {
+                        monthlyVerseCounts[verse.monthlyDay - 1]++;
+                    }
+                });
+                
+                // Find the day with the least verses
+                let minCount = Math.min(...monthlyVerseCounts);
+                return monthlyVerseCounts.indexOf(minCount) + 1;
+            }
+            
+            addVerse(text, reference) {
+                const verse = {
+                    id: Date.now(),
+                    text: text,
+                    reference: reference,
+                    stage: 'daily',
+                    daysInStage: 0,
+                    weeksInStage: 0,
+                    monthsInStage: 0,
+                    weeklyDay: null,
+                    monthlyDay: null,
+                    practicedToday: false,
+                    addedDate: new Date().toISOString()
+                };
+                
+                this.verses.push(verse);
+                this.saveData();
+                this.updateDisplay();
+            }
+            
+            practiceVerse(verseId) {
+                const verse = this.verses.find(v => v.id === verseId);
+                if (verse) {
+                    verse.practicedToday = true;
+                    this.saveData();
+                    this.updateDisplay();
+                    closePracticeModal();
+                }
+            }
+            
+            getTodaysVerses() {
+                const today = new Date();
+                const dayOfWeek = today.getDay();
+                const dayOfMonth = today.getDate();
+                const isFebruary = today.getMonth() === 1;
+                const isLeapYear = today.getFullYear() % 4 === 0;
+                
+                return {
+                    daily: this.verses.filter(v => v.stage === 'daily'),
+                    weekly: this.verses.filter(v => v.stage === 'weekly' && v.weeklyDay === dayOfWeek),
+                    monthly: this.verses.filter(v => {
+                        if (v.stage !== 'monthly') return false;
+                        
+                        // Handle February special cases
+                        if (isFebruary) {
+                            const lastDayOfMonth = isLeapYear ? 29 : 28;
+                            if (dayOfMonth === lastDayOfMonth) {
+                                return v.monthlyDay >= lastDayOfMonth && v.monthlyDay <= 30;
+                            }
+                        }
+                        
+                        return v.monthlyDay === dayOfMonth;
+                    })
+                };
+            }
+            
+            updateDisplay() {
+                this.updatePracticeTab();
+                this.updateStatsTab();
+            }
+            
+            updatePracticeTab() {
+                const todaysVerses = this.getTodaysVerses();
+                const dailyContainer = document.getElementById('daily-verses');
+                const weeklyContainer = document.getElementById('weekly-verses');
+                const monthlyContainer = document.getElementById('monthly-verses');
+                const noVersesContainer = document.getElementById('no-verses');
+                
+                const totalTodayVerses = todaysVerses.daily.length + todaysVerses.weekly.length + todaysVerses.monthly.length;
+                
+                if (totalTodayVerses === 0) {
+                    noVersesContainer.style.display = 'block';
+                    dailyContainer.innerHTML = '';
+                    weeklyContainer.innerHTML = '';
+                    monthlyContainer.innerHTML = '';
+                    return;
+                }
+                
+                noVersesContainer.style.display = 'none';
+                
+                // Daily verses
+                if (todaysVerses.daily.length > 0) {
+                    dailyContainer.innerHTML = '<div class="section-title">Daily Practice (7 weeks)</div>' +
+                        todaysVerses.daily.map(verse => this.createVerseCard(verse)).join('');
+                } else {
+                    dailyContainer.innerHTML = '';
+                }
+                
+                // Weekly verses
+                if (todaysVerses.weekly.length > 0) {
+                    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                    const today = new Date().getDay();
+                    weeklyContainer.innerHTML = `<div class="section-title">Weekly Practice - ${dayNames[today]}</div>` +
+                        todaysVerses.weekly.map(verse => this.createVerseCard(verse)).join('');
+                } else {
+                    weeklyContainer.innerHTML = '';
+                }
+                
+                // Monthly verses
+                if (todaysVerses.monthly.length > 0) {
+                    const dayOfMonth = new Date().getDate();
+                    monthlyContainer.innerHTML = `<div class="section-title">Monthly Practice - Day ${dayOfMonth}</div>` +
+                        todaysVerses.monthly.map(verse => this.createVerseCard(verse)).join('');
+                } else {
+                    monthlyContainer.innerHTML = '';
+                }
+            }
+            
+            createVerseCard(verse) {
+                const progress = this.getVerseProgress(verse);
+                const practiceStatus = verse.practicedToday ? 'Practiced Today ✓' : 'Not Practiced';
+                const practiceClass = verse.practicedToday ? 'btn-success' : 'btn-practice';
+                
+                return `
+                    <div class="verse-card">
+                        <div class="verse-reference">${verse.reference}</div>
+                        <div class="verse-text">${verse.text}</div>
+                        <div class="verse-progress">
+                            <span>${progress.text}</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${progress.percentage}%"></div>
+                            </div>
+                        </div>
+                        <div class="verse-actions">
+                            <button class="btn-practice ${practiceClass}" onclick="showPracticeModal(${verse.id})">
+                                ${verse.practicedToday ? 'Review' : 'Practice'}
+                            </button>
+                            <button class="btn-skip" onclick="skipVerse(${verse.id})">
+                                ${verse.practicedToday ? 'Mark Unpracticed' : 'Skip Today'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            getVerseProgress(verse) {
+                let progress = { text: '', percentage: 0 };
+                
+                if (verse.stage === 'daily') {
+                    const weeksCompleted = Math.floor(verse.daysInStage / 7);
+                    progress.text = `Week ${weeksCompleted + 1} of 7`;
+                    progress.percentage = (verse.daysInStage / 49) * 100;
+                } else if (verse.stage === 'weekly') {
+                    const monthsCompleted = Math.floor(verse.weeksInStage / 4);
+                    progress.text = `Month ${monthsCompleted + 1} of 7`;
+                    progress.percentage = (verse.weeksInStage / 28) * 100;
+                } else if (verse.stage === 'monthly') {
+                    const yearsCompleted = Math.floor(verse.monthsInStage / 12);
+                    progress.text = `Year ${yearsCompleted + 1} of 7`;
+                    progress.percentage = (verse.monthsInStage / 84) * 100;
+                }
+                
+                return progress;
+            }
+            
+            updateStatsTab() {
+                const stats = this.getStats();
+                document.getElementById('total-verses').textContent = stats.total;
+                document.getElementById('daily-count').textContent = stats.daily;
+                document.getElementById('weekly-count').textContent = stats.weekly;
+                document.getElementById('monthly-count').textContent = stats.monthly;
+                
+                const allVersesList = document.getElementById('all-verses-list');
+                if (this.verses.length === 0) {
+                    allVersesList.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📖</div><p>No verses added yet</p></div>';
+                } else {
+                    allVersesList.innerHTML = this.verses.map(verse => this.createVerseCard(verse)).join('');
+                }
+            }
+            
+            getStats() {
+                return {
+                    total: this.verses.length,
+                    daily: this.verses.filter(v => v.stage === 'daily').length,
+                    weekly: this.verses.filter(v => v.stage === 'weekly').length,
+                    monthly: this.verses.filter(v => v.stage === 'monthly').length
+                };
+            }
+            
+            saveData() {
+                localStorage.setItem('scriptureVerses', JSON.stringify(this.verses));
+            }
+            
+            exportData() {
+                const data = {
+                    verses: this.verses,
+                    exportDate: new Date().toISOString(),
+                    version: '1.0'
+                };
+                
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `scripture-memory-backup-${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+            
+            importData() {
+                const fileInput = document.getElementById('import-file');
+                const file = fileInput.files[0];
+                
+                if (!file) {
+                    alert('Please select a file to import');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        if (data.verses && Array.isArray(data.verses)) {
+                            this.verses = data.verses;
+                            this.saveData();
+                            this.updateDisplay();
+                            alert('Data imported successfully!');
+                        } else {
+                            alert('Invalid backup file format');
+                        }
+                    } catch (error) {
+                        alert('Error reading backup file');
+                    }
+                };
+                reader.readAsText(file);
+            }
+            
+            clearAllData() {
+                if (confirm('Are you sure you want to delete all verses? This cannot be undone.')) {
+                    this.verses = [];
+                    this.saveData();
+                    this.updateDisplay();
+                    alert('All data has been cleared');
+                }
+            }
+            
+            registerServiceWorker() {
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.register('/sw.js').catch(console.error);
+                }
+            }
+        }
+        
+        // Global app instance
+        let app;
+        
+        // Initialize app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            app = new ScriptureMemoryApp();
+        });
+        
+        // Tab switching
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        // Add verse functionality
+        function addVerse() {
+            const text = document.getElementById('verse-text').value.trim();
+            const reference = document.getElementById('verse-reference').value.trim();
+            
+            if (!text || !reference) {
+                alert('Please enter both verse text and reference');
+                return;
+            }
+            
+            app.addVerse(text, reference);
+            
+            // Clear form
+            document.getElementById('verse-text').value = '';
+            document.getElementById('verse-reference').value = '';
+            
+            // Switch to practice tab
+            showTab('practice');
+            document.querySelector('.tab').click();
+            
+            alert('Verse added successfully!');
+        }
+        
+        // Practice modal functionality
+        function showPracticeModal(verseId) {
+            const verse = app.verses.find(v => v.id === verseId);
+            if (!verse) return;
+            
+            const modal = document.getElementById('practice-modal');
+            const content = document.getElementById('practice-content');
+            
+            content.innerHTML = `
+                <div class="verse-card">
+                    <div class="verse-reference">${verse.reference}</div>
+                    <div class="verse-text no-select">${verse.text}</div>
+                    <div style="margin-top: 20px;">
+                        <button class="btn btn-success" onclick="app.practiceVerse(${verse.id})">
+                            Mark as Practiced
+                        </button>
+                        <button class="btn btn-secondary" onclick="closePracticeModal()">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            modal.style.display = 'block';
+        }
+        
+        function closePracticeModal() {
+            document.getElementById('practice-modal').style.display = 'none';
+        }
+        
+        // Skip/toggle practice status
+        function skipVerse(verseId) {
+            const verse = app.verses.find(v => v.id === verseId);
+            if (verse) {
+                verse.practicedToday = !verse.practicedToday;
+                app.saveData();
+                app.updateDisplay();
+            }
+        }
+        
+        // Export data
+        function exportData() {
+            app.exportData();
+        }
+        
+        // Import data
+        function importData() {
+            app.importData();
+        }
+        
+        // Clear all data
+        function clearAllData() {
+            app.clearAllData();
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('practice-modal');
+            if (event.target === modal) {
+                closePracticeModal();
+            }
+        }
+        
+        // Service Worker for PWA functionality
+        const swCode = `
+            const CACHE_NAME = 'scripture-memory-v1';
+            const urlsToCache = [
+                '/',
+                '/index.html'
+            ];
+            
+            self.addEventListener('install', event => {
+                event.waitUntil(
+                    caches.open(CACHE_NAME)
+                        .then(cache => cache.addAll(urlsToCache))
+                );
+            });
+            
+            self.addEventListener('fetch', event => {
+                event.respondWith(
+                    caches.match(event.request)
+                        .then(response => {
+                            if (response) {
+                                return response;
+                            }
+                            return fetch(event.request);
+                        })
+                );
+            });
+        `;
+        
+        // Register service worker inline
+        if ('serviceWorker' in navigator) {
+            const blob = new Blob([swCode], { type: 'application/javascript' });
+            const swUrl = URL.createObjectURL(blob);
+            navigator.serviceWorker.register(swUrl).catch(console.error);
+        }
+    </script>
+</body>
+</html>
