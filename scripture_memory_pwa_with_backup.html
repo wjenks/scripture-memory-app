@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scripture Memory</title>
+    <meta name="theme-color" content="#2563eb">
+    <meta name="description" content="Scripture Memory Application - Learn and memorize Bible verses">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiU2NyaXB0dXJlIE1lbW9yeSIsInNob3J0X25hbWUiOiJTY3JpcHR1cmUiLCJzdGFydF91cmwiOiIuLyIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiNmZmZmZmYiLCJ0aGVtZV9jb2xvciI6IiMyNTYzZWIiLCJpY29ucyI6W3sic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCNGJXeHVjejBpYUhSMGNEb3ZMM2QzZHk1M00zQnZjbWN2TWpBd01DOXpkbWNpSUhkcFpIUm9QU0kwT0NJZ2FHVnBaMmgwUFNJME9DSWdkbWxsZDBKdmVEMGlNQ0F3SURRNElEUTRJajQ4Y21WamRDQjNhV1IwYUQwaU5EZ2lJR2hsYVdkb2REMGlORGdpSUdacGJHdzlJaU16TkRjeFpUTWlMejQ4ZEdWNGRDQjRQU0kxSWlCNVBTSXlNQ0lnWm1sc2JEMGlJM1ptWm1abVppSWdabTl1ZEMxbVlXMXBiSGs5SW5OaGJuTXRjMlZ5YVdZaUlHWnZiblF0YzJsNlpUMGlNVEFpUGtJOEwzUmxlSFErUEhSbGVIUWdlRDBpTlNJZ2VUMGlNemt5SWlCbWFXeHNQU0lqTTJabVptWm1JaUJtYjI1MExXWmhiV2xzZVQwaWMyRnVjeTF6WlhKcFppSWdabTl1ZEMxemFYcGxQU0kwSWo0OEwzUmxlSFErUEM5emRtYysiLCJzaXplcyI6IjQ4eDQ4IiwidHlwZSI6ImltYWdlL3N2Zyt4bWwifV19">
+    
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('data:application/javascript;base64,Y29uc3QgQ0FDSEVfTkFNRSA9ICdzY3JpcHR1cmUtbWVtb3J5LXYxJzsKY29uc3QgdXJsc1RvQ2FjaGUgPSBbCiAgJy4vJywKICAnLi9pbmRleC5odG1sJwpdOwoKc2VsZi5hZGRFdmVudExpc3RlbmVyKCdpbnN0YWxsJywgZXZlbnQgPT4gewogIGV2ZW50LndhaXRVbnRpbCgKICAgIGNhY2hlcy5vcGVuKENBQ0hFX05BTUUpCiAgICAgIC50aGVuKGNhY2hlID0+IGNhY2hlLmFkZEFsbCh1cmxzVG9DYWNoZSkpCiAgKTsKfSk7CgpzZWxmLmFkZEV2ZW50TGlzdGVuZXIoJ2ZldGNoJywgZXZlbnQgPT4gewogIGV2ZW50LnJlc3BvbmRXaXRoKAogICAgY2FjaGVzLm1hdGNoKGV2ZW50LnJlcXVlc3QpCiAgICAgIC50aGVuKHJlc3BvbnNlID0+IHJlc3BvbnNlIHx8IGZldGNoKGV2ZW50LnJlcXVlc3QpKQogICk7Cn0pOw==');
+        }
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .app-container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header h1 {
+            color: #2563eb;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .date-display {
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #059669);
+            transition: width 0.3s ease;
+        }
+        
+        .verse-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            flex: 1;
+        }
+        
+        .verse-text {
+            font-size: 1.3em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            color: #1f2937;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .verse-reference {
+            font-size: 1.1em;
+            color: #2563eb;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .verse-type {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.8);
+            color: #2563eb;
+            border: 2px solid #2563eb;
+        }
+        
+        .btn-secondary:hover {
+            background: #2563eb;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .verse-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 15px;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .verse-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: 700;
+            color: #2563eb;
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .nav-btn {
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #2563eb;
+        }
+        
+        .nav-btn:hover {
+            background: #2563eb;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .nav-btn.active {
+            background: #2563eb;
+            color: white;
+        }
+        
+        .verse-management {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .verse-list {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+        
+        .verse-item {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .verse-item-ref {
+            font-weight: 600;
+            color: #2563eb;
+            margin-bottom: 5px;
+        }
+        
+        .verse-item-text {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .verse-item-status {
+            font-size: 0.8em;
+            color: #10b981;
+            font-weight: 500;
+        }
+        
+        .add-verse-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .form-input {
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1em;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+        
+        .comparison-result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+        
+        .comparison-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+        
+        .comparison-partial {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #f59e0b;
+        }
+        
+        .comparison-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+        
+        @media (max-width: 480px) {
+            .app-container {
+                padding: 15px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .btn {
+                padding: 12px;
+            }
+            
+            .verse-text {
+                font-size: 1.2em;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <h1>Scripture Memory</h1>
+            <div class="date-display" id="dateDisplay"></div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div id="progressText">0% Complete</div>
+        </div>
+        
+        <div class="navigation">
+            <button class="nav-btn" onclick="showView('backup')">Backup</button>
+            <button class="nav-btn active" onclick="showView('practice')">Practice</button>
+            <button class="nav-btn" onclick="showView('verses')">Verses</button>
+            <button class="nav-btn" onclick="showView('stats')">Stats</button>
+        </div>
+        
+        <!-- Practice View -->
+        <div id="practiceView" class="verse-container">
+            <div id="noVersesMessage" class="hidden">
+                <h2 style="text-align: center; color: #666; margin-bottom: 20px;">No verses to practice today</h2>
+                <p style="text-align: center; color: #666;">Add your first verse to get started!</p>
+            </div>
+            
+            <div id="practiceContent" class="hidden">
+                <div class="verse-type" id="verseType">Daily Practice</div>
+                <div class="verse-text" id="verseText"></div>
+                <div class="verse-reference" id="verseReference"></div>
+                
+                <div class="controls">
+                    <button class="btn btn-primary" id="showHideBtn" onclick="toggleVerse()">Hide Text</button>
+                    <button class="btn btn-secondary" onclick="nextVerse()">Next</button>
+                </div>
+                
+                <div id="testSection" class="hidden">
+                    <textarea class="verse-input" id="verseInput" placeholder="Type the verse here..."></textarea>
+                    <button class="btn btn-success" onclick="checkVerse()">Check</button>
+                    <div id="comparisonResult" class="comparison-result hidden"></div>
+                </div>
+                
+                <button class="btn btn-primary" id="testBtn" onclick="startTest()">Test Yourself</button>
+            </div>
+        </div>
+        
+        <!-- Verses View -->
+        <div id="versesView" class="verse-management hidden">
+            <h2 style="margin-bottom: 20px; color: #2563eb;">Manage Verses</h2>
+            
+            <div class="add-verse-form">
+                <input type="text" class="form-input" id="verseRefInput" placeholder="Reference (e.g., John 3:16)">
+                <textarea class="form-input" id="verseTextInput" placeholder="Verse text..." rows="4"></textarea>
+                <button class="btn btn-primary" onclick="addVerse()">Add Verse</button>
+            </div>
+            
+            <div class="verse-list" id="verseList"></div>
+        </div>
+        
+        <!-- Stats View -->
+        <div id="statsView" class="verse-management hidden">
+            <h2 style="margin-bottom: 20px; color: #2563eb;">Statistics</h2>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number" id="totalVerses">0</span>
+                    <div class="stat-label">Total Verses</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="dailyVerses">0</span>
+                    <div class="stat-label">Daily Practice</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="weeklyVerses">0</span>
+                    <div class="stat-label">Weekly Practice</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="monthlyVerses">0</span>
+                    <div class="stat-label">Monthly Practice</div>
+                </div>
+            </div>
+            
+            <div class="verse-list" id="statsVerseList"></div>
+        </div>
+    
+        <!-- Backup View -->
+        <div id="backupView" class="verse-management hidden">
+            <h2 style="margin-bottom: 20px; color: #2563eb;">Backup & Import</h2>
+            
+            <button class="btn btn-primary" onclick="app.exportData()">Export Backup</button>
+
+            <div style="margin-top: 20px;">
+                <input type="file" id="importFile" accept=".json">
+                <button class="btn btn-success" style="margin-top: 10px;" onclick="app.importData()">Import Backup</button>
+            </div>
+        </div>
+
+    <script>
+        class ScriptureMemoryApp {
+
+    exportData() {
+        const dataStr = JSON.stringify(this.verses, null, 2);
+        const blob = new Blob([dataStr], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "scripture_memory_backup.json";
+        a.click();
+        
+        URL.revokeObjectURL(url);
+    }
+
+    importData() {
+        const fileInput = document.getElementById('importFile');
+        if (!fileInput.files.length) {
+            alert('Please select a file to import.');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const importedVerses = JSON.parse(e.target.result);
+                if (!Array.isArray(importedVerses)) {
+                    throw new Error('Invalid format');
+                }
+
+                this.verses = importedVerses;
+                this.saveData();
+                this.updateTodaysVerses();
+                this.updateDisplay();
+                this.updateStats();
+                this.updateVerseList();
+
+                alert('Import successful!');
+            } catch (error) {
+                alert('Import failed. Invalid file format.');
+            }
+        };
+        reader.readAsText(fileInput.files[0]);
+    }
+
+            constructor() {
+                this.verses = JSON.parse(localStorage.getItem('scriptureVerses') || '[]');
+                this.currentVerseIndex = 0;
+                this.todaysVerses = [];
+                this.verseHidden = false;
+                this.currentView = 'practice';
+                
+                this.initializeApp();
+            }
+            
+            initializeApp() {
+                this.updateDateDisplay();
+                this.processVerses();
+                this.updateTodaysVerses();
+                this.updateDisplay();
+                this.updateStats();
+                
+                // Auto-save every 30 seconds
+                setInterval(() => this.saveData(), 30000);
+            }
+            
+            updateDateDisplay() {
+                const now = new Date();
+                const options = { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                };
+                document.getElementById('dateDisplay').textContent = now.toLocaleDateString('en-US', options);
+            }
+            
+            processVerses() {
+                const today = new Date();
+                const currentTime = today.getTime();
+                
+                this.verses.forEach(verse => {
+                    const addedDate = new Date(verse.addedDate);
+                    const daysSinceAdded = Math.floor((currentTime - addedDate.getTime()) / (1000 * 60 * 60 * 24));
+                    
+                    // Update verse status based on time elapsed
+                    if (verse.status === 'daily' && daysSinceAdded >= 49) { // 7 weeks
+                        this.promoteToWeekly(verse);
+                    } else if (verse.status === 'weekly' && this.getWeeksSincePromotion(verse) >= 28) { // 7 months
+                        this.promoteToMonthly(verse);
+                    } else if (verse.status === 'monthly' && this.getMonthsSincePromotion(verse) >= 84) { // 7 years
+                        this.retireVerse(verse);
+                    }
+                });
+                
+                this.saveData();
+            }
+            
+            promoteToWeekly(verse) {
+                const weeklyVerses = this.verses.filter(v => v.status === 'weekly');
+                const dayOfWeek = weeklyVerses.length % 7;
+                const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                
+                verse.status = 'weekly';
+                verse.weeklyDay = days[dayOfWeek];
+                verse.promotedToWeekly = new Date().toISOString();
+            }
+            
+            promoteToMonthly(verse) {
+                const monthlyVerses = this.verses.filter(v => v.status === 'monthly');
+                const dayOfMonth = (monthlyVerses.length % 30) + 1;
+                
+                verse.status = 'monthly';
+                verse.monthlyDay = dayOfMonth;
+                verse.promotedToMonthly = new Date().toISOString();
+            }
+            
+            retireVerse(verse) {
+                verse.status = 'retired';
+                verse.retiredDate = new Date().toISOString();
+            }
+            
+            getWeeksSincePromotion(verse) {
+                if (!verse.promotedToWeekly) return 0;
+                const promotionDate = new Date(verse.promotedToWeekly);
+                const now = new Date();
+                return Math.floor((now - promotionDate) / (1000 * 60 * 60 * 24 * 7));
+            }
+            
+            getMonthsSincePromotion(verse) {
+                if (!verse.promotedToMonthly) return 0;
+                const promotionDate = new Date(verse.promotedToMonthly);
+                const now = new Date();
+                return Math.floor((now - promotionDate) / (1000 * 60 * 60 * 24 * 30));
+            }
+            
+            updateTodaysVerses() {
+                const today = new Date();
+                const dayOfWeek = today.getDay();
+                const dayOfMonth = today.getDate();
+                const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                
+                this.todaysVerses = [];
+                
+                // Daily verses
+                this.verses.filter(v => v.status === 'daily').forEach(verse => {
+                    this.todaysVerses.push({...verse, practiceType: 'Daily Practice'});
+                });
+                
+                // Weekly verses
+                this.verses.filter(v => v.status === 'weekly' && v.weeklyDay === days[dayOfWeek]).forEach(verse => {
+                    this.todaysVerses.push({...verse, practiceType: 'Weekly Practice'});
+                });
+                
+                // Monthly verses
+                this.verses.filter(v => v.status === 'monthly').forEach(verse => {
+                    let shouldPractice = false;
+                    
+                    if (verse.monthlyDay <= dayOfMonth) {
+                        shouldPractice = true;
+                    }
+                    
+                    // February special handling
+                    if (today.getMonth() === 1) { // February
+                        const isLeapYear = today.getFullYear() % 4 === 0;
+                        const lastDay = isLeapYear ? 29 : 28;
+                        
+                        if (dayOfMonth === lastDay && verse.monthlyDay >= 29) {
+                            shouldPractice = true;
+                        }
+                    }
+                    
+                    // 31-day months - no practice on 31st
+                    if (dayOfMonth === 31) {
+                        shouldPractice = false;
+                    }
+                    
+                    if (shouldPractice && verse.monthlyDay === dayOfMonth) {
+                        this.todaysVerses.push({...verse, practiceType: 'Monthly Practice'});
+                    }
+                });
+                
+                this.currentVerseIndex = 0;
+            }
+            
+            updateDisplay() {
+                const practiceContent = document.getElementById('practiceContent');
+                const noVersesMessage = document.getElementById('noVersesMessage');
+                
+                if (this.todaysVerses.length === 0) {
+                    practiceContent.classList.add('hidden');
+                    noVersesMessage.classList.remove('hidden');
+                    this.updateProgress(0);
+                    return;
+                }
+                
+                practiceContent.classList.remove('hidden');
+                noVersesMessage.classList.add('hidden');
+                
+                const currentVerse = this.todaysVerses[this.currentVerseIndex];
+                document.getElementById('verseType').textContent = currentVerse.practiceType;
+                document.getElementById('verseText').textContent = currentVerse.text;
+                document.getElementById('verseReference').textContent = currentVerse.reference;
+                
+                // Update progress
+                const progress = ((this.currentVerseIndex + 1) / this.todaysVerses.length) * 100;
+                this.updateProgress(progress);
+                
+                // Reset verse visibility
+                this.verseHidden = false;
+                document.getElementById('showHideBtn').textContent = 'Hide Text';
+                document.getElementById('verseText').classList.remove('hidden');
+                document.getElementById('testSection').classList.add('hidden');
+                document.getElementById('testBtn').classList.remove('hidden');
+                document.getElementById('comparisonResult').classList.add('hidden');
+                document.getElementById('verseInput').value = '';
+            }
+            
+            updateProgress(percentage) {
+                const progressFill = document.getElementById('progressFill');
+                const progressText = document.getElementById('progressText');
+                
+                progressFill.style.width = percentage + '%';
+                progressText.textContent = Math.round(percentage) + '% Complete';
+            }
+            
+            toggleVerse() {
+                const verseText = document.getElementById('verseText');
+                const showHideBtn = document.getElementById('showHideBtn');
+                
+                if (this.verseHidden) {
+                    verseText.classList.remove('hidden');
+                    showHideBtn.textContent = 'Hide Text';
+                    this.verseHidden = false;
+                } else {
+                    verseText.classList.add('hidden');
+                    showHideBtn.textContent = 'Show Text';
+                    this.verseHidden = true;
+                }
+            }
+            
+            nextVerse() {
+                if (this.todaysVerses.length === 0) return;
+                
+                this.currentVerseIndex = (this.currentVerseIndex + 1) % this.todaysVerses.length;
+                this.updateDisplay();
+            }
+            
+            startTest() {
+                document.getElementById('testSection').classList.remove('hidden');
+                document.getElementById('testBtn').classList.add('hidden');
+                document.getElementById('verseInput').focus();
+            }
+            
+            checkVerse() {
+                const userInput = document.getElementById('verseInput').value.trim();
+                const currentVerse = this.todaysVerses[this.currentVerseIndex];
+                const correctText = currentVerse.text.toLowerCase();
+                const userText = userInput.toLowerCase();
+                
+                const resultDiv = document.getElementById('comparisonResult');
+                resultDiv.classList.remove('hidden');
+                
+                // Simple comparison - can be enhanced with more sophisticated matching
+                const similarity = this.calculateSimilarity(userText, correctText);
+                
+                if (similarity > 0.9) {
+                    resultDiv.className = 'comparison-result comparison-success';
+                    resultDiv.textContent = 'Excellent! Perfect match!';
+                } else if (similarity > 0.7) {
+                    resultDiv.className = 'comparison-result comparison-partial';
+                    resultDiv.textContent = 'Good! Minor differences detected.';
+                } else {
+                    resultDiv.className = 'comparison-result comparison-error';
+                    resultDiv.textContent = 'Keep practicing! Try again.';
+                }
+                
+                // Show the correct text
+                document.getElementById('verseText').classList.remove('hidden');
+                document.getElementById('showHideBtn').textContent = 'Hide Text';
+                this.verseHidden = false;
+            }
+            
+            calculateSimilarity(str1, str2) {
+                const longer = str1.length > str2.length ? str1 : str2;
+                const shorter = str1.length > str2.length ? str2 : str1;
+                
+                if (longer.length === 0) return 1.0;
+                
+                const editDistance = this.levenshteinDistance(longer, shorter);
+                return (longer.length - editDistance) / longer.length;
+            }
+            
+            levenshteinDistance(str1, str2) {
+                const matrix = [];
+                
+                for (let i = 0; i <= str2.length; i++) {
+                    matrix[i] = [i];
+                }
+                
+                for (let j = 0; j <= str1.length; j++) {
+                    matrix[0][j] = j;
+                }
+                
+                for (let i = 1; i <= str2.length; i++) {
+                    for (let j = 1; j <= str1.length; j++) {
+                        if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
+                            matrix[i][j] = matrix[i - 1][j - 1];
+                        } else {
+                            matrix[i][j] = Math.min(
+                                matrix[i - 1][j - 1] + 1,
+                                matrix[i][j - 1] + 1,
+                                matrix[i - 1][j] + 1
+                            );
+                        }
+                    }
+                }
+                
+                return matrix[str2.length][str1.length];
+            }
+            
+            addVerse() {
+                const reference = document.getElementById('verseRefInput').value.trim();
+                const text = document.getElementById('verseTextInput').value.trim();
+                
+                if (!reference || !text) {
+                    alert('Please enter both reference and text');
+                    return;
+                }
+                
+                const newVerse = {
+                    id: Date.now(),
+                    reference: reference,
+                    text: text,
+                    addedDate: new Date().toISOString(),
+                    status: 'daily',
+                    practiceCount: 0
+                };
+                
+                this.verses.push(newVerse);
+                this.saveData();
+                this.updateTodaysVerses();
+                this.updateDisplay();
+                this.updateStats();
+                this.updateVerseList();
+                
+                // Clear form
+                document.getElementById('verseRefInput').value = '';
+                document.getElementById('verseTextInput').value = '';
+                
+                alert('Verse added successfully!');
+            }
+            
+            removeVerse(id) {
+                if (confirm('Are you sure you want to remove this verse?')) {
+                    this.verses = this.verses.filter(v => v.id !== id);
+                    this.saveData();
+                    this.updateTodaysVerses();
+                    this.updateDisplay();
+                    this.updateStats();
+                    this.updateVerseList();
+                }
+            }
+            
+            updateVerseList() {
+                const verseList = document.getElementById('verseList');
+                verseList.innerHTML = '';
+                
+                this.verses.forEach(verse => {
+                    const verseDiv = document.createElement('div');
+                    verseDiv.className = 'verse-item';
+                    
+                    const statusText = this.getStatusText(verse);
+                    
+                    verseDiv.innerHTML = `
+                        <div class="verse-item-ref">${verse.reference}</div>
+                        <div class="verse-item-text">${verse.text.substring(0, 100)}${verse.text.length > 100 ? '...' : ''}</div>
+                        <div class="verse-item-status">${statusText}</div>
+                        <button class="btn btn-secondary" style="margin-top: 10px; padding: 8px 15px; font-size: 0.9em;" onclick="app.removeVerse(${verse.id})">Remove</button>
+                    `;
+                    
+                    verseList.appendChild(verseDiv);
+                });
+            }
+            
+            getStatusText(verse) {
+                const addedDate = new Date(verse.addedDate);
+                const daysSinceAdded = Math.floor((Date.now() - addedDate.getTime()) / (1000 * 60 * 60 * 24));
+                
+                switch (verse.status) {
+                    case 'daily':
+                        const daysLeft = Math.max(0, 49 - daysSinceAdded);
+                        return `Daily Practice (${daysLeft} days until weekly)`;
+                    case 'weekly':
+                        const weeksLeft = Math.max(0, 28 - this.getWeeksSincePromotion(verse));
+                        return `Weekly Practice - ${verse.weeklyDay} (${weeksLeft} weeks until monthly)`;
+                    case 'monthly':
+                        const monthsLeft = Math.max(0, 84 - this.getMonthsSincePromotion(verse));
+                        return `Monthly Practice - Day ${verse.monthlyDay} (${monthsLeft} months until retired)`;
+                    case 'retired':
+                        return 'Retired';
+                    default:
+                        return 'Unknown';
+                }
+            }
+            
+            updateStats() {
+                const totalVerses = this.verses.length;
+                const dailyVerses = this.verses.filter(v => v.status === 'daily').length;
+                const weeklyVerses = this.verses.filter(v => v.status === 'weekly').length;
+                const monthlyVerses = this.verses.filter(v => v.status === 'monthly').length;
+                
+                document.getElementById('totalVerses').textContent = totalVerses;
+                document.getElementById('dailyVerses').textContent = dailyVerses;
+                document.getElementById('weeklyVerses').textContent = weeklyVerses;
+                document.getElementById('monthlyVerses').textContent = monthlyVerses;
+                
+                // Update stats verse list
+                const statsVerseList = document.getElementById('statsVerseList');
+                statsVerseList.innerHTML = '';
+                
+                const versesByStatus = {
+                    'daily': [],
+                    'weekly': [],
+                    'monthly': [],
+                    'retired': []
+                };
+                
+                this.verses.forEach(verse => {
+                    versesByStatus[verse.status].push(verse);
+                });
+                
+                Object.keys(versesByStatus).forEach(status => {
+                    if (versesByStatus[status].length > 0) {
+                        const statusHeader = document.createElement('h3');
+                        statusHeader.textContent = status.charAt(0).toUpperCase() + status.slice(1) + ' Verses';
+                        statusHeader.style.color = '#2563eb';
+                        statusHeader.style.marginTop = '20px';
+                        statusHeader.style.marginBottom = '10px';
+                        statsVerseList.appendChild(statusHeader);
+                        
+                        versesByStatus[status].forEach(verse => {
+                            const verseDiv = document.createElement('div');
+                            verseDiv.className = 'verse-item';
+                            
+                            verseDiv.innerHTML = `
+                                <div class="verse-item-ref">${verse.reference}</div>
+                                <div class="verse-item-text">${verse.text.substring(0, 80)}${verse.text.length > 80 ? '...' : ''}</div>
+                                <div class="verse-item-status">${this.getStatusText(verse)}</div>
+                            `;
+                            
+                            statsVerseList.appendChild(verseDiv);
+                        });
+                    }
+                });
+            }
+            
+            saveData() {
+                localStorage.setItem('scriptureVerses', JSON.stringify(this.verses));
+            }
+            
+            showView(viewName) {
+                // Hide all views
+                document.getElementById('practiceView').classList.add('hidden');
+                document.getElementById('versesView').classList.add('hidden');
+                document.getElementById('statsView').classList.add('hidden');
+                
+                // Show selected view
+                document.getElementById(viewName + 'View').classList.remove('hidden');
+                
+                // Update navigation
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                event.target.classList.add('active');
+                
+                // Update data when switching views
+                if (viewName === 'verses') {
+                    this.updateVerseList();
+                } else if (viewName === 'stats') {
+                    this.updateStats();
+                }
+                
+                this.currentView = viewName;
+            }
+        }
+        
+        // Global functions for onclick handlers
+        let app;
+        
+        function showView(viewName) {
+            app.showView(viewName);
+        }
+        
+        function toggleVerse() {
+            app.toggleVerse();
+        }
+        
+        function nextVerse() {
+            app.nextVerse();
+        }
+        
+        function startTest() {
+            app.startTest();
+        }
+        
+        function checkVerse() {
+            app.checkVerse();
+        }
+        
+        function addVerse() {
+            app.addVerse();
+        }
+        
+        // Initialize app when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            app = new ScriptureMemoryApp();
+            
+            // Add some sample verses for demonstration
+            if (app.verses.length === 0) {
+                const sampleVerses = [
+                    {
+                        id: 1,
+                        reference: "John 3:16",
+                        text: "For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life.",
+                        addedDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(), // 10 days ago
+                        status: 'daily',
+                        practiceCount: 0
+                    },
+                    {
+                        id: 2,
+                        reference: "Romans 8:28",
+                        text: "And we know that in all things God works for the good of those who love him, who have been called according to his purpose.",
+                        addedDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
+                        status: 'daily',
+                        practiceCount: 0
+                    }
+                ];
+                
+                app.verses = sampleVerses;
+                app.saveData();
+                app.updateTodaysVerses();
+                app.updateDisplay();
+                app.updateStats();
+            }
+            
+            // Handle Enter key in verse input
+            document.getElementById('verseInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    checkVerse();
+                }
+            });
+            
+            // Handle Enter key in add verse form
+            document.getElementById('verseTextInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && e.ctrlKey) {
+                    e.preventDefault();
+                    addVerse();
+                }
+            });
+        });
+        
+        // Add offline support
+        window.addEventListener('online', function() {
+            console.log('Back online');
+        });
+        
+        window.addEventListener('offline', function() {
+            console.log('Gone offline');
+        });
+    </script>
+</body>
+</html>
