@@ -36,6 +36,7 @@
             <button class="nav-btn" onclick="showView('verses')">Verses</button>
             <button class="nav-btn" onclick="showView('stats')">Stats</button>
             <button class="nav-btn" onclick="showView('backup')">Backup</button>
+            <button class="nav-btn" onclick="showView('help')">Help</button>
         </div>
 
         <!-- Practice View -->
@@ -153,6 +154,63 @@
             <div style="margin-top: 20px;">
                 <input type="file" id="importFile" accept=".json">
                 <button class="btn btn-success" style="margin-top: 10px;" onclick="app.importData()">Import Backup</button>
+            </div>
+        </div>
+
+        <!-- Help View -->
+        <div id="helpView" class="verse-management hidden">
+            <h2 style="margin-bottom: 20px; color: var(--text-heading);">How to Use</h2>
+
+            <div class="help-section">
+                <h3>Getting Started</h3>
+                <p>Go to the <strong>Verses</strong> tab to add your first verse. Type a reference (e.g., "John 3:16"), pick a translation, and click <strong>Look Up</strong> to auto-fill the text. Or type the verse text manually. Click <strong>Add Verse</strong> to save it.</p>
+            </div>
+
+            <div class="help-section">
+                <h3>Daily Practice</h3>
+                <p>The <strong>Practice</strong> tab shows today's verses. Use <strong>Hide Text</strong> to test your recall, or <strong>Test Yourself</strong> to type the verse and check your accuracy. Tap <strong>Next</strong> to move through your verses.</p>
+            </div>
+
+            <div class="help-section">
+                <h3>Marking Reviews</h3>
+                <p>After practicing a verse, tap <strong>Mark Reviewed</strong> to record your completion. You can only mark one review per verse per day. The progress bar below each verse shows how many reviews you've completed toward promotion.</p>
+            </div>
+
+            <div class="help-section">
+                <h3>Spaced Repetition</h3>
+                <p>Verses progress through phases as you review them consistently:</p>
+                <ul>
+                    <li><strong>Daily</strong> — Practice every day. After 49 reviews and 49 days, promotes to weekly.</li>
+                    <li><strong>Weekly</strong> — Practice once a week on an assigned day. After 28 reviews and 28 weeks, promotes to monthly.</li>
+                    <li><strong>Monthly</strong> — Practice once a month on an assigned day. After 84 reviews and 84 months, the verse retires.</li>
+                    <li><strong>Retired</strong> — Fully memorized. The verse no longer appears in practice.</li>
+                </ul>
+                <p>Both the required time <em>and</em> the required number of reviews must be met before a verse promotes.</p>
+            </div>
+
+            <div class="help-section">
+                <h3>Review History</h3>
+                <p>Tap any verse in the <strong>Verses</strong> or <strong>Stats</strong> tab to open its detail view. Here you can see the full review history, add a review for a past date, or delete an accidental entry.</p>
+            </div>
+
+            <div class="help-section">
+                <h3>Verse Lookup</h3>
+                <p>On the <strong>Verses</strong> tab, type a reference and choose a translation (CSB, NIV, or NKJV), then click <strong>Look Up</strong>. The verse text will auto-fill. You can edit it before adding if needed.</p>
+            </div>
+
+            <div class="help-section">
+                <h3>Backup</h3>
+                <p>Your verses are saved in your browser automatically. For extra safety:</p>
+                <ul>
+                    <li><strong>Folder sync</strong> (Chrome/Edge) — Set a backup folder (like OneDrive or Google Drive) and the app saves there on every change.</li>
+                    <li><strong>Scheduled download</strong> — If no folder is connected, the app auto-downloads a backup file on a weekly or monthly schedule.</li>
+                    <li><strong>Manual backup</strong> — Use Export/Import on the Backup tab anytime.</li>
+                </ul>
+            </div>
+
+            <div class="help-section">
+                <h3>Dark Mode</h3>
+                <p>Tap the sun/moon icon in the top-right corner to toggle between light and dark themes. Your preference is saved automatically.</p>
             </div>
         </div>
     </div>

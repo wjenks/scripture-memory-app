@@ -1240,7 +1240,7 @@ class ScriptureMemoryApp {
 let app;
 
 function showView(viewName) {
-    ['practiceView', 'versesView', 'statsView', 'backupView'].forEach(id => {
+    ['practiceView', 'versesView', 'statsView', 'backupView', 'helpView'].forEach(id => {
         document.getElementById(id)?.classList.add('hidden');
     });
     document.getElementById(viewName + 'View')?.classList.remove('hidden');
