@@ -24,6 +24,105 @@ function updateThemeIcon() {
     btn.textContent = isDark ? '\u2600' : '\u263E';
 }
 
+// ===== Bible API =====
+const BIBLE_API_KEY = 'P-PsOCvRm0DaOgf1qrCSH';
+const BIBLE_API_BASE = 'https://rest.api.bible/v1/bibles';
+
+// Book name -> API.Bible book ID
+const BOOK_IDS = {
+    'genesis': 'GEN', 'gen': 'GEN', 'ge': 'GEN',
+    'exodus': 'EXO', 'exod': 'EXO', 'ex': 'EXO',
+    'leviticus': 'LEV', 'lev': 'LEV', 'le': 'LEV',
+    'numbers': 'NUM', 'num': 'NUM', 'nu': 'NUM',
+    'deuteronomy': 'DEU', 'deut': 'DEU', 'dt': 'DEU',
+    'joshua': 'JOS', 'josh': 'JOS',
+    'judges': 'JDG', 'judg': 'JDG', 'jdg': 'JDG',
+    'ruth': 'RUT', 'ru': 'RUT',
+    '1 samuel': '1SA', '1samuel': '1SA', '1 sam': '1SA', '1sam': '1SA',
+    '2 samuel': '2SA', '2samuel': '2SA', '2 sam': '2SA', '2sam': '2SA',
+    '1 kings': '1KI', '1kings': '1KI', '1 kgs': '1KI', '1kgs': '1KI',
+    '2 kings': '2KI', '2kings': '2KI', '2 kgs': '2KI', '2kgs': '2KI',
+    '1 chronicles': '1CH', '1chronicles': '1CH', '1 chr': '1CH', '1chr': '1CH', '1 chron': '1CH',
+    '2 chronicles': '2CH', '2chronicles': '2CH', '2 chr': '2CH', '2chr': '2CH', '2 chron': '2CH',
+    'ezra': 'EZR', 'ezr': 'EZR',
+    'nehemiah': 'NEH', 'neh': 'NEH', 'ne': 'NEH',
+    'esther': 'EST', 'esth': 'EST', 'es': 'EST',
+    'job': 'JOB', 'jb': 'JOB',
+    'psalm': 'PSA', 'psalms': 'PSA', 'ps': 'PSA', 'psa': 'PSA',
+    'proverbs': 'PRO', 'prov': 'PRO', 'pr': 'PRO',
+    'ecclesiastes': 'ECC', 'eccl': 'ECC', 'eccles': 'ECC', 'ec': 'ECC',
+    'song of solomon': 'SNG', 'song': 'SNG', 'sos': 'SNG', 'ss': 'SNG', 'song of songs': 'SNG',
+    'isaiah': 'ISA', 'isa': 'ISA', 'is': 'ISA',
+    'jeremiah': 'JER', 'jer': 'JER', 'je': 'JER',
+    'lamentations': 'LAM', 'lam': 'LAM', 'la': 'LAM',
+    'ezekiel': 'EZK', 'ezek': 'EZK', 'eze': 'EZK',
+    'daniel': 'DAN', 'dan': 'DAN', 'da': 'DAN',
+    'hosea': 'HOS', 'hos': 'HOS', 'ho': 'HOS',
+    'joel': 'JOL', 'joe': 'JOL',
+    'amos': 'AMO', 'am': 'AMO',
+    'obadiah': 'OBA', 'obad': 'OBA', 'ob': 'OBA',
+    'jonah': 'JON', 'jon': 'JON',
+    'micah': 'MIC', 'mic': 'MIC',
+    'nahum': 'NAM', 'nah': 'NAM', 'na': 'NAM',
+    'habakkuk': 'HAB', 'hab': 'HAB',
+    'zephaniah': 'ZEP', 'zeph': 'ZEP', 'zep': 'ZEP',
+    'haggai': 'HAG', 'hag': 'HAG',
+    'zechariah': 'ZEC', 'zech': 'ZEC', 'zec': 'ZEC',
+    'malachi': 'MAL', 'mal': 'MAL',
+    'matthew': 'MAT', 'matt': 'MAT', 'mt': 'MAT',
+    'mark': 'MRK', 'mk': 'MRK', 'mr': 'MRK',
+    'luke': 'LUK', 'lk': 'LUK', 'lu': 'LUK',
+    'john': 'JHN', 'jn': 'JHN', 'jhn': 'JHN',
+    'acts': 'ACT', 'act': 'ACT', 'ac': 'ACT',
+    'romans': 'ROM', 'rom': 'ROM', 'ro': 'ROM',
+    '1 corinthians': '1CO', '1corinthians': '1CO', '1 cor': '1CO', '1cor': '1CO',
+    '2 corinthians': '2CO', '2corinthians': '2CO', '2 cor': '2CO', '2cor': '2CO',
+    'galatians': 'GAL', 'gal': 'GAL', 'ga': 'GAL',
+    'ephesians': 'EPH', 'eph': 'EPH',
+    'philippians': 'PHP', 'phil': 'PHP', 'php': 'PHP',
+    'colossians': 'COL', 'col': 'COL',
+    '1 thessalonians': '1TH', '1thessalonians': '1TH', '1 thess': '1TH', '1thess': '1TH', '1 thes': '1TH',
+    '2 thessalonians': '2TH', '2thessalonians': '2TH', '2 thess': '2TH', '2thess': '2TH', '2 thes': '2TH',
+    '1 timothy': '1TI', '1timothy': '1TI', '1 tim': '1TI', '1tim': '1TI',
+    '2 timothy': '2TI', '2timothy': '2TI', '2 tim': '2TI', '2tim': '2TI',
+    'titus': 'TIT', 'tit': 'TIT',
+    'philemon': 'PHM', 'phlm': 'PHM', 'phm': 'PHM',
+    'hebrews': 'HEB', 'heb': 'HEB',
+    'james': 'JAS', 'jas': 'JAS', 'jam': 'JAS',
+    '1 peter': '1PE', '1peter': '1PE', '1 pet': '1PE', '1pet': '1PE', '1 pt': '1PE',
+    '2 peter': '2PE', '2peter': '2PE', '2 pet': '2PE', '2pet': '2PE', '2 pt': '2PE',
+    '1 john': '1JN', '1john': '1JN', '1 jn': '1JN', '1jn': '1JN',
+    '2 john': '2JN', '2john': '2JN', '2 jn': '2JN', '2jn': '2JN',
+    '3 john': '3JN', '3john': '3JN', '3 jn': '3JN', '3jn': '3JN',
+    'jude': 'JUD', 'jud': 'JUD',
+    'revelation': 'REV', 'rev': 'REV', 're': 'REV'
+};
+
+function parseReference(ref) {
+    // Parse references like "John 3:16", "1 Corinthians 13:4-7", "Romans 8:28-29"
+    ref = ref.trim();
+
+    // Match: optional number + book name, then chapter:verse(-verse)
+    const match = ref.match(/^(\d?\s*\w[\w\s]*?)\s+(\d+):(\d+)(?:\s*-\s*(\d+))?$/i);
+    if (!match) return null;
+
+    const bookName = match[1].toLowerCase().trim();
+    const chapter = match[2];
+    const verseStart = match[3];
+    const verseEnd = match[4] || null;
+
+    const bookId = BOOK_IDS[bookName];
+    if (!bookId) return null;
+
+    const startId = `${bookId}.${chapter}.${verseStart}`;
+    const endId = verseEnd ? `${bookId}.${chapter}.${verseEnd}` : null;
+
+    return {
+        passageId: endId ? `${startId}-${endId}` : startId,
+        display: ref
+    };
+}
+
 // ===== Review Requirements =====
 const PHASE_CONFIG = {
     daily:   { requiredReviews: 49, label: 'Daily',   next: 'weekly'  },
@@ -262,7 +361,9 @@ class ScriptureMemoryApp {
 
         this.saveData();
         this.processVerses();
+        const savedIndex = this.currentVerseIndex;
         this.updateTodaysVerses();
+        this.currentVerseIndex = Math.min(savedIndex, this.todaysVerses.length - 1);
         this.updateDisplay();
     }
 
@@ -512,6 +613,65 @@ class ScriptureMemoryApp {
         }
 
         return matrix[str2.length][str1.length];
+    }
+
+    // ===== Verse Lookup =====
+    async lookupVerse() {
+        const refInput = document.getElementById('verseRefInput');
+        const textInput = document.getElementById('verseTextInput');
+        const statusEl = document.getElementById('lookupStatus');
+        const lookupBtn = document.getElementById('lookupBtn');
+        const bibleId = document.getElementById('translationSelect').value;
+
+        const ref = refInput.value.trim();
+        if (!ref) {
+            this.showLookupStatus('Please enter a reference first', 'error');
+            return;
+        }
+
+        const parsed = parseReference(ref);
+        if (!parsed) {
+            this.showLookupStatus('Could not parse reference. Use format: Book Chapter:Verse (e.g., John 3:16)', 'error');
+            return;
+        }
+
+        lookupBtn.disabled = true;
+        lookupBtn.textContent = 'Looking up...';
+        this.showLookupStatus('Fetching verse...', 'loading');
+
+        try {
+            const url = `${BIBLE_API_BASE}/${bibleId}/passages/${parsed.passageId}?content-type=text&include-notes=false&include-titles=false&include-chapter-numbers=false&include-verse-numbers=false`;
+            const response = await fetch(url, {
+                headers: { 'api-key': BIBLE_API_KEY }
+            });
+
+            if (!response.ok) {
+                throw new Error(response.status === 404 ? 'Verse not found' : `API error (${response.status})`);
+            }
+
+            const data = await response.json();
+            const content = data.data.content.replace(/\s+/g, ' ').trim();
+            const reference = data.data.reference;
+
+            // Auto-fill the form
+            refInput.value = reference;
+            textInput.value = content;
+
+            const translationName = document.getElementById('translationSelect').selectedOptions[0].text;
+            this.showLookupStatus(`Found: ${reference} (${translationName})`, 'success');
+        } catch (err) {
+            this.showLookupStatus(err.message, 'error');
+        } finally {
+            lookupBtn.disabled = false;
+            lookupBtn.textContent = 'Look Up';
+        }
+    }
+
+    showLookupStatus(message, type) {
+        const statusEl = document.getElementById('lookupStatus');
+        statusEl.textContent = message;
+        statusEl.className = 'lookup-status ' + type;
+        statusEl.classList.remove('hidden');
     }
 
     // ===== Verse Management =====

@@ -497,6 +497,42 @@ body {
     gap: 15px;
 }
 
+.lookup-row {
+    display: flex;
+    gap: 10px;
+}
+
+.lookup-row select {
+    flex: 1;
+}
+
+.lookup-row button {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+.lookup-status {
+    font-size: 0.85em;
+    padding: 8px 12px;
+    border-radius: 8px;
+    line-height: 1.4;
+}
+
+.lookup-status.loading {
+    color: var(--text-secondary);
+    background: var(--verse-item-bg);
+}
+
+.lookup-status.error {
+    color: var(--error-text);
+    background: var(--error-bg);
+}
+
+.lookup-status.success {
+    color: var(--success-text);
+    background: var(--success-bg);
+}
+
 /* ===== Comparison Result ===== */
 .comparison-result {
     margin-top: 15px;

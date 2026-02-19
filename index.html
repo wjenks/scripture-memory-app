@@ -76,8 +76,17 @@
             <h2 style="margin-bottom: 20px; color: var(--text-heading);">Manage Verses</h2>
 
             <div class="add-verse-form">
-                <input type="text" class="form-input" id="verseRefInput" placeholder="Reference (e.g., John 3:16)">
-                <textarea class="form-input" id="verseTextInput" placeholder="Verse text..." rows="4"></textarea>
+                <input type="text" class="form-input" id="verseRefInput" placeholder="Reference (e.g., John 3:16 or Romans 8:28-29)">
+                <div class="lookup-row">
+                    <select class="form-input" id="translationSelect">
+                        <option value="a556c5305ee15c3f-01">CSB</option>
+                        <option value="78a9f6124f344018-01">NIV</option>
+                        <option value="63097d2a0a2f7db3-01">NKJV</option>
+                    </select>
+                    <button class="btn btn-secondary" onclick="app.lookupVerse()" id="lookupBtn">Look Up</button>
+                </div>
+                <div id="lookupStatus" class="lookup-status hidden"></div>
+                <textarea class="form-input" id="verseTextInput" placeholder="Verse text (or use Look Up to auto-fill)..." rows="4"></textarea>
                 <button class="btn btn-primary" onclick="addVerse()">Add Verse</button>
             </div>
 
