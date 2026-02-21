@@ -7,6 +7,7 @@ A progressive web app for memorizing Bible verses using spaced repetition.
 - **Spaced repetition system** — Verses progress through daily, weekly, monthly, and retired phases
 - **Manual review tracking** — Mark reviews complete with a single tap; both time and review count required for promotion
 - **Bible verse lookup** — Look up verses by reference in CSB, NIV, or NKJV via API.Bible
+- **Speech recitation** — Recite verses aloud and get accuracy feedback via speech recognition
 - **Review history** — View, add, and delete review entries for any verse
 - **Dark mode** — Toggle between light and dark themes; respects system preference
 - **Auto-backup** — Sync to a local folder (OneDrive, Google Drive) or scheduled downloads as a safety net
@@ -40,7 +41,7 @@ The **Practice** tab shows all verses due for today:
 - **Weekly** verses appear on their assigned day of the week
 - **Monthly** verses appear on their assigned day of the month
 
-Use **Hide Text** to test your recall, or **Test Yourself** to type the verse and check accuracy. Tap **Mark Reviewed** after practicing each verse.
+Use **Hide Text** to test your recall, **Test Yourself** to type the verse, or **Recite** to speak it aloud and check accuracy via speech recognition (Chrome/Edge/Safari). Tap **Mark Reviewed** after practicing each verse.
 
 ## Review History
 

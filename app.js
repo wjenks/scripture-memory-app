@@ -508,9 +508,14 @@ class ScriptureMemoryApp {
         document.getElementById('showHideBtn').textContent = 'Hide Text';
         document.getElementById('verseText').classList.remove('hidden');
         document.getElementById('testSection').classList.add('hidden');
+        document.getElementById('reciteSection').classList.add('hidden');
         document.getElementById('testBtn').classList.remove('hidden');
+        document.getElementById('reciteBtn').classList.remove('hidden');
         document.getElementById('comparisonResult').classList.add('hidden');
+        document.getElementById('reciteResult').classList.add('hidden');
+        document.getElementById('reciteTranscript').textContent = '';
         document.getElementById('verseInput').value = '';
+        this.stopRecite();
     }
 
     updateProgress(percentage) {
@@ -546,6 +551,7 @@ class ScriptureMemoryApp {
     startTest() {
         document.getElementById('testSection').classList.remove('hidden');
         document.getElementById('testBtn').classList.add('hidden');
+        document.getElementById('reciteBtn').classList.add('hidden');
         document.getElementById('verseInput').focus();
     }
 
@@ -572,6 +578,140 @@ class ScriptureMemoryApp {
         }
 
         // Show the correct text
+        document.getElementById('verseText').classList.remove('hidden');
+        document.getElementById('showHideBtn').textContent = 'Hide Text';
+        this.verseHidden = false;
+    }
+
+    // ===== Speech Recognition (Recite) =====
+    startRecite() {
+        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+            alert('Speech recognition is not supported in this browser. Try Chrome or Edge.');
+            return;
+        }
+
+        // Hide verse text and buttons, show recite UI
+        document.getElementById('verseText').classList.add('hidden');
+        document.getElementById('showHideBtn').textContent = 'Show Text';
+        this.verseHidden = true;
+        document.getElementById('testBtn').classList.add('hidden');
+        document.getElementById('reciteBtn').classList.add('hidden');
+        document.getElementById('reciteSection').classList.remove('hidden');
+        document.getElementById('reciteResult').classList.add('hidden');
+        document.getElementById('reciteTranscript').textContent = '';
+        document.getElementById('reciteStatus').textContent = 'Tap the microphone to begin';
+
+        this.reciteTranscript = '';
+        this.isListening = false;
+    }
+
+    toggleRecite() {
+        if (this.isListening) {
+            this.stopRecite();
+            this.evaluateRecitation();
+        } else {
+            this.beginListening();
+        }
+    }
+
+    beginListening() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        this.recognition = new SpeechRecognition();
+        this.recognition.continuous = true;
+        this.recognition.interimResults = true;
+        this.recognition.lang = 'en-US';
+
+        this.reciteTranscript = '';
+        this.isListening = true;
+
+        const micBtn = document.getElementById('reciteMicBtn');
+        const statusEl = document.getElementById('reciteStatus');
+        const transcriptEl = document.getElementById('reciteTranscript');
+
+        micBtn.classList.add('listening');
+        statusEl.textContent = 'Listening... Tap microphone when done';
+
+        this.recognition.onresult = (event) => {
+            let final = '';
+            let interim = '';
+            for (let i = 0; i < event.results.length; i++) {
+                if (event.results[i].isFinal) {
+                    final += event.results[i][0].transcript;
+                } else {
+                    interim += event.results[i][0].transcript;
+                }
+            }
+            this.reciteTranscript = final;
+            transcriptEl.textContent = final + (interim ? interim : '');
+        };
+
+        this.recognition.onerror = (event) => {
+            if (event.error === 'no-speech') {
+                statusEl.textContent = 'No speech detected. Tap the microphone to try again.';
+            } else if (event.error !== 'aborted') {
+                statusEl.textContent = 'Error: ' + event.error + '. Tap the microphone to try again.';
+            }
+            micBtn.classList.remove('listening');
+            this.isListening = false;
+        };
+
+        this.recognition.onend = () => {
+            // If still in listening mode (auto-stopped by browser), evaluate
+            if (this.isListening) {
+                this.isListening = false;
+                micBtn.classList.remove('listening');
+                if (this.reciteTranscript.trim()) {
+                    this.evaluateRecitation();
+                } else {
+                    statusEl.textContent = 'No speech captured. Tap the microphone to try again.';
+                }
+            }
+        };
+
+        this.recognition.start();
+    }
+
+    stopRecite() {
+        if (this.recognition && this.isListening) {
+            this.isListening = false;
+            this.recognition.stop();
+            document.getElementById('reciteMicBtn').classList.remove('listening');
+        }
+    }
+
+    stripPunctuation(str) {
+        return str.replace(/[^\w\s]|_/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
+    }
+
+    evaluateRecitation() {
+        const currentVerse = this.todaysVerses[this.currentVerseIndex];
+        if (!currentVerse) return;
+
+        const spokenText = this.stripPunctuation(this.reciteTranscript);
+        const correctText = this.stripPunctuation(currentVerse.text);
+
+        const resultDiv = document.getElementById('reciteResult');
+        resultDiv.classList.remove('hidden');
+
+        const similarity = this.calculateSimilarity(spokenText, correctText);
+        const statusEl = document.getElementById('reciteStatus');
+
+        // Slightly more lenient thresholds for speech (accounts for recognition errors)
+        if (similarity > 0.85) {
+            resultDiv.className = 'comparison-result comparison-success';
+            resultDiv.textContent = `Excellent! ${Math.round(similarity * 100)}% match!`;
+            statusEl.textContent = 'Great recitation!';
+        } else if (similarity > 0.65) {
+            resultDiv.className = 'comparison-result comparison-partial';
+            resultDiv.textContent = `Good effort! ${Math.round(similarity * 100)}% match.`;
+            statusEl.textContent = 'Almost there — review and try again';
+        } else {
+            resultDiv.className = 'comparison-result comparison-error';
+            resultDiv.textContent = `${Math.round(similarity * 100)}% match. Keep practicing!`;
+            statusEl.textContent = 'Keep working on this one';
+        }
+
+        // Show the correct text for comparison
         document.getElementById('verseText').classList.remove('hidden');
         document.getElementById('showHideBtn').textContent = 'Hide Text';
         this.verseHidden = false;

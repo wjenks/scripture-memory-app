@@ -68,7 +68,19 @@
                     <div id="comparisonResult" class="comparison-result hidden"></div>
                 </div>
 
-                <button class="btn btn-primary" id="testBtn" onclick="startTest()">Test Yourself</button>
+                <div id="reciteSection" class="hidden">
+                    <div class="recite-status" id="reciteStatus">Tap the microphone to begin</div>
+                    <button class="recite-mic-btn" id="reciteMicBtn" onclick="app.toggleRecite()">
+                        <span class="mic-icon" id="micIcon">&#127908;</span>
+                    </button>
+                    <div class="recite-transcript" id="reciteTranscript"></div>
+                    <div id="reciteResult" class="comparison-result hidden"></div>
+                </div>
+
+                <div class="test-buttons">
+                    <button class="btn btn-primary" id="testBtn" onclick="startTest()">Test Yourself</button>
+                    <button class="btn btn-primary" id="reciteBtn" onclick="app.startRecite()">Recite</button>
+                </div>
             </div>
         </div>
 
@@ -168,7 +180,7 @@
 
             <div class="help-section">
                 <h3>Daily Practice</h3>
-                <p>The <strong>Practice</strong> tab shows today's verses. Use <strong>Hide Text</strong> to test your recall, or <strong>Test Yourself</strong> to type the verse and check your accuracy. Tap <strong>Next</strong> to move through your verses.</p>
+                <p>The <strong>Practice</strong> tab shows today's verses. Use <strong>Hide Text</strong> to test your recall, <strong>Test Yourself</strong> to type the verse, or <strong>Recite</strong> to speak it aloud and check your accuracy. Tap <strong>Next</strong> to move through your verses.</p>
             </div>
 
             <div class="help-section">
