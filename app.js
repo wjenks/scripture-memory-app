@@ -616,14 +616,9 @@ class ScriptureMemoryApp {
 
     beginListening() {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        this.recognition = new SpeechRecognition();
-        this.recognition.continuous = true;
-        this.recognition.interimResults = true;
-        this.recognition.lang = 'en-US';
 
-        this.reciteTranscript = '';
-        this.reciteFinalSegments = [];
-        this.reciteLastResultCount = 0;
+        this.reciteSegments = [];
+        this.reciteInterim = '';
         this.isListening = true;
 
         const micBtn = document.getElementById('reciteMicBtn');
@@ -633,47 +628,62 @@ class ScriptureMemoryApp {
         micBtn.classList.add('listening');
         statusEl.textContent = 'Listening... Tap microphone when done';
 
+        this.startRecognitionSession();
+    }
+
+    startRecognitionSession() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        this.recognition = new SpeechRecognition();
+        this.recognition.continuous = false;
+        this.recognition.interimResults = true;
+        this.recognition.lang = 'en-US';
+
+        const transcriptEl = document.getElementById('reciteTranscript');
+        const statusEl = document.getElementById('reciteStatus');
+        const micBtn = document.getElementById('reciteMicBtn');
+
         this.recognition.onresult = (event) => {
-            // Collect only newly finalized segments
-            for (let i = this.reciteLastResultCount; i < event.results.length; i++) {
-                if (event.results[i].isFinal) {
-                    this.reciteFinalSegments.push(event.results[i][0].transcript.trim());
-                    this.reciteLastResultCount = i + 1;
-                }
+            const result = event.results[0];
+            const text = result[0].transcript.trim();
+
+            if (result.isFinal) {
+                this.reciteSegments.push(text);
+                this.reciteInterim = '';
+            } else {
+                this.reciteInterim = text;
             }
 
-            // Get current interim text (last non-final result only)
-            let interim = '';
-            const lastResult = event.results[event.results.length - 1];
-            if (!lastResult.isFinal) {
-                interim = lastResult[0].transcript.trim();
-            }
-
-            // Build display: finalized segments + current interim
-            const finalText = this.reciteFinalSegments.join(' ');
-            this.reciteTranscript = finalText;
-            transcriptEl.textContent = finalText + (interim ? ' ' + interim : '');
+            this.reciteTranscript = this.reciteSegments.join(' ');
+            transcriptEl.textContent = this.reciteTranscript +
+                (this.reciteInterim ? ' ' + this.reciteInterim : '');
         };
 
         this.recognition.onerror = (event) => {
             if (event.error === 'no-speech') {
-                statusEl.textContent = 'No speech detected. Tap the microphone to try again.';
-            } else if (event.error !== 'aborted') {
-                statusEl.textContent = 'Error: ' + event.error + '. Tap the microphone to try again.';
+                // No speech in this session — auto-restart if still listening
+                return;
             }
-            micBtn.classList.remove('listening');
-            this.isListening = false;
+            if (event.error !== 'aborted') {
+                statusEl.textContent = 'Error: ' + event.error + '. Tap the microphone to try again.';
+                micBtn.classList.remove('listening');
+                this.isListening = false;
+            }
         };
 
         this.recognition.onend = () => {
-            // If still in listening mode (auto-stopped by browser), evaluate
             if (this.isListening) {
-                this.isListening = false;
-                micBtn.classList.remove('listening');
-                if (this.reciteTranscript.trim()) {
-                    this.evaluateRecitation();
-                } else {
-                    statusEl.textContent = 'No speech captured. Tap the microphone to try again.';
+                // Auto-restart to keep listening for the next segment
+                try {
+                    this.startRecognitionSession();
+                } catch (e) {
+                    // If restart fails, finalize what we have
+                    this.isListening = false;
+                    micBtn.classList.remove('listening');
+                    if (this.reciteTranscript.trim()) {
+                        this.evaluateRecitation();
+                    } else {
+                        statusEl.textContent = 'No speech captured. Tap the microphone to try again.';
+                    }
                 }
             }
         };
