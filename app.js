@@ -622,6 +622,8 @@ class ScriptureMemoryApp {
         this.recognition.lang = 'en-US';
 
         this.reciteTranscript = '';
+        this.reciteFinalSegments = [];
+        this.reciteLastResultCount = 0;
         this.isListening = true;
 
         const micBtn = document.getElementById('reciteMicBtn');
@@ -632,17 +634,25 @@ class ScriptureMemoryApp {
         statusEl.textContent = 'Listening... Tap microphone when done';
 
         this.recognition.onresult = (event) => {
-            let final = '';
-            let interim = '';
-            for (let i = 0; i < event.results.length; i++) {
+            // Collect only newly finalized segments
+            for (let i = this.reciteLastResultCount; i < event.results.length; i++) {
                 if (event.results[i].isFinal) {
-                    final += event.results[i][0].transcript;
-                } else {
-                    interim += event.results[i][0].transcript;
+                    this.reciteFinalSegments.push(event.results[i][0].transcript.trim());
+                    this.reciteLastResultCount = i + 1;
                 }
             }
-            this.reciteTranscript = final;
-            transcriptEl.textContent = final + (interim ? interim : '');
+
+            // Get current interim text (last non-final result only)
+            let interim = '';
+            const lastResult = event.results[event.results.length - 1];
+            if (!lastResult.isFinal) {
+                interim = lastResult[0].transcript.trim();
+            }
+
+            // Build display: finalized segments + current interim
+            const finalText = this.reciteFinalSegments.join(' ');
+            this.reciteTranscript = finalText;
+            transcriptEl.textContent = finalText + (interim ? ' ' + interim : '');
         };
 
         this.recognition.onerror = (event) => {
