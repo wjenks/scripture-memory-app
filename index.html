@@ -231,8 +231,24 @@
     <div class="modal-overlay" id="verseModalOverlay">
         <div class="modal">
             <button class="modal-close" onclick="app.closeVerseModal()">&times;</button>
-            <h2 id="modalVerseRef"></h2>
-            <div class="modal-verse-text" id="modalVerseText"></div>
+
+            <!-- Display mode -->
+            <div id="modalDisplayMode">
+                <h2 id="modalVerseRef"></h2>
+                <div class="modal-verse-text" id="modalVerseText"></div>
+                <button class="btn btn-secondary btn-sm" onclick="app.startEditVerse()" style="margin-bottom: 15px;">Edit Verse</button>
+            </div>
+
+            <!-- Edit mode -->
+            <div id="modalEditMode" class="hidden">
+                <input type="text" class="form-input" id="editVerseRef" style="margin-bottom: 10px; width: 100%;">
+                <textarea class="form-input" id="editVerseText" rows="4" style="margin-bottom: 10px; width: 100%;"></textarea>
+                <div class="verse-item-actions">
+                    <button class="btn btn-success btn-sm" onclick="app.saveEditVerse()">Save</button>
+                    <button class="btn btn-secondary btn-sm" onclick="app.cancelEditVerse()">Cancel</button>
+                </div>
+            </div>
+
             <div class="modal-status" id="modalVerseStatus"></div>
 
             <div class="review-log-header">

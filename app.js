@@ -1013,9 +1013,55 @@ class ScriptureMemoryApp {
 
     closeVerseModal() {
         document.getElementById('verseModalOverlay').classList.remove('active');
+        this.cancelEditVerse();
         // Refresh lists in case data changed
         this.updateVerseList();
         this.updateStats();
+    }
+
+    startEditVerse() {
+        const verseId = Number(document.getElementById('verseModalOverlay').getAttribute('data-verse-id'));
+        const verse = this.verses.find(v => v.id === verseId);
+        if (!verse) return;
+
+        document.getElementById('editVerseRef').value = verse.reference;
+        document.getElementById('editVerseText').value = verse.text;
+        document.getElementById('modalDisplayMode').classList.add('hidden');
+        document.getElementById('modalEditMode').classList.remove('hidden');
+    }
+
+    saveEditVerse() {
+        const verseId = Number(document.getElementById('verseModalOverlay').getAttribute('data-verse-id'));
+        const verse = this.verses.find(v => v.id === verseId);
+        if (!verse) return;
+
+        const newRef = document.getElementById('editVerseRef').value.trim();
+        const newText = document.getElementById('editVerseText').value.trim();
+
+        if (!newRef || !newText) {
+            alert('Reference and text cannot be empty.');
+            return;
+        }
+
+        verse.reference = newRef;
+        verse.text = newText;
+        this.saveData();
+
+        // Update modal display
+        document.getElementById('modalVerseRef').textContent = newRef;
+        document.getElementById('modalVerseText').textContent = newText;
+        this.cancelEditVerse();
+
+        // Refresh practice view in case this verse is showing
+        this.updateTodaysVerses();
+        const savedIndex = this.currentVerseIndex;
+        this.currentVerseIndex = Math.min(savedIndex, Math.max(0, this.todaysVerses.length - 1));
+        this.updateDisplay();
+    }
+
+    cancelEditVerse() {
+        document.getElementById('modalDisplayMode').classList.remove('hidden');
+        document.getElementById('modalEditMode').classList.add('hidden');
     }
 
     renderReviewLog(verse) {
