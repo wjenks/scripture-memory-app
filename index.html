@@ -240,10 +240,13 @@
             </div>
 
             <!-- Edit mode -->
-            <div id="modalEditMode" class="hidden">
+            <div id="modalEditMode" class="hidden" style="background: var(--verse-item-bg); padding: 15px; border-radius: 12px; margin-bottom: 15px;">
+                <h3 style="color: var(--text-heading); margin-bottom: 10px;">Edit Verse</h3>
+                <label style="font-size: 0.85em; color: var(--text-secondary);">Reference</label>
                 <input type="text" class="form-input" id="editVerseRef" style="margin-bottom: 10px; width: 100%;">
+                <label style="font-size: 0.85em; color: var(--text-secondary);">Text</label>
                 <textarea class="form-input" id="editVerseText" rows="4" style="margin-bottom: 10px; width: 100%;"></textarea>
-                <div class="verse-item-actions">
+                <div style="display: flex; gap: 8px;">
                     <button class="btn btn-success btn-sm" onclick="app.saveEditVerse()">Save</button>
                     <button class="btn btn-secondary btn-sm" onclick="app.cancelEditVerse()">Cancel</button>
                 </div>
