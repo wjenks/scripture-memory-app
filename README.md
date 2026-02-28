@@ -43,12 +43,13 @@ The **Practice** tab shows all verses due for today:
 
 Use **Hide Text** to test your recall, **Test Yourself** to type the verse, or **Recite** to speak it aloud and check accuracy via speech recognition (Chrome/Edge/Safari). Tap **Mark Reviewed** after practicing each verse.
 
-## Review History
+## Review History & Editing
 
 Tap any verse in the **Verses** or **Stats** tab to open its detail view:
 - See the full review history with dates
 - Add a review for a past date (mark a missed day)
 - Delete an accidental review entry
+- Edit the verse reference or text
 - Changes immediately update the review count and promotion eligibility
 
 ## Backup Options
