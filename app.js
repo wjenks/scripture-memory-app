@@ -628,6 +628,10 @@ class ScriptureMemoryApp {
         micBtn.classList.add('listening');
         statusEl.textContent = 'Listening... Tap microphone when done';
 
+        // Disable review button while mic is active to prevent iOS ghost clicks
+        const reviewBtn = document.getElementById('reviewCompleteBtn');
+        if (reviewBtn) reviewBtn.disabled = true;
+
         this.startRecognitionSession();
     }
 
@@ -667,10 +671,20 @@ class ScriptureMemoryApp {
                 statusEl.textContent = 'Error: ' + event.error + '. Tap the microphone to try again.';
                 micBtn.classList.remove('listening');
                 this.isListening = false;
+                setTimeout(() => this._restoreReviewButton(), 600);
             }
         };
 
         this.recognition.onend = () => {
+            // Flush any pending interim result as final.
+            // iOS Safari often never sets isFinal=true, so interim holds the real transcript.
+            if (this.reciteInterim) {
+                this.reciteSegments.push(this.reciteInterim);
+                this.reciteInterim = '';
+                this.reciteTranscript = this.reciteSegments.join(' ');
+                transcriptEl.textContent = this.reciteTranscript;
+            }
+
             if (this.isListening) {
                 // Auto-restart to keep listening for the next segment
                 try {
@@ -679,6 +693,7 @@ class ScriptureMemoryApp {
                     // If restart fails, finalize what we have
                     this.isListening = false;
                     micBtn.classList.remove('listening');
+                    this._restoreReviewButton();
                     if (this.reciteTranscript.trim()) {
                         this.evaluateRecitation();
                     } else {
@@ -696,7 +711,19 @@ class ScriptureMemoryApp {
             this.isListening = false;
             this.recognition.stop();
             document.getElementById('reciteMicBtn').classList.remove('listening');
+            // Re-enable review button after a delay to prevent iOS ghost clicks
+            // (when the system mic overlay dismisses, iOS can fire synthetic clicks)
+            setTimeout(() => this._restoreReviewButton(), 600);
         }
+    }
+
+    _restoreReviewButton() {
+        const reviewBtn = document.getElementById('reviewCompleteBtn');
+        if (!reviewBtn) return;
+        const currentVerse = this.todaysVerses[this.currentVerseIndex];
+        const sourceVerse = this.verses.find(v => v.id === currentVerse?.id);
+        const alreadyReviewed = sourceVerse ? this.hasReviewedToday(sourceVerse) : true;
+        reviewBtn.disabled = alreadyReviewed;
     }
 
     stripPunctuation(str) {
